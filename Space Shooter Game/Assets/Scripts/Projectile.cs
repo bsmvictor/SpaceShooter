@@ -17,11 +17,11 @@ public class Projectile : MonoBehaviour
         if (collision.CompareTag("Enemy"))
         {
             // Aplica dano ao inimigo (se ele tiver o componente Enemy)
-            //Enemy enemy = collision.GetComponent<Enemy>();
-            //if (enemy != null)
-            //{
-            //    enemy.TakeDamage(damage);
-            //}
+            Enemy enemy = collision.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage);
+            }
 
             // Destroi o projétil
             Destroy(gameObject);

@@ -9,9 +9,13 @@ public class AttackController : MonoBehaviour
     public Transform firePoint; // Local onde o projétil será instanciado
     public float projectileSpeed = 20f; // Velocidade do projétil
     public float projectileLifetime = 5f; // Tempo para o projétil ser destruído se não colidir
+    public float fireRate = 0.2f; // Taxa de disparo (segundos entre cada disparo)
 
     [Header("References")]
     public InputSystem_Actions inputActions; // Input System para o tiro
+
+    private bool isShooting = false; // Indica se o jogador está segurando o botão de ataque
+    private float nextFireTime = 0f; // Controla o tempo do próximo disparo
 
     private void Awake()
     {
@@ -19,21 +23,39 @@ public class AttackController : MonoBehaviour
         inputActions = new InputSystem_Actions();
         inputActions.Player.Enable();
 
-        // Vincula o evento de tiro ao Input System
-        inputActions.Player.Attack.performed += OnShoot;
+        // Vincula os eventos de ataque ao Input System
+        inputActions.Player.Attack.started += OnAttackStarted; // Quando o botão é pressionado
+        inputActions.Player.Attack.canceled += OnAttackCanceled; // Quando o botão é solto
     }
 
     private void OnDestroy()
     {
-        // Desvincula o evento ao destruir o objeto
-        inputActions.Player.Attack.performed -= OnShoot;
+        // Desvincula os eventos ao destruir o objeto
+        inputActions.Player.Attack.started -= OnAttackStarted;
+        inputActions.Player.Attack.canceled -= OnAttackCanceled;
         inputActions.Player.Disable();
     }
 
-    private void OnShoot(InputAction.CallbackContext context)
+    private void Update()
     {
-        // Instancia o projétil e aplica a força
-        ShootProjectile();
+        // Verifica se o botão está pressionado e dispara continuamente
+        if (isShooting && Time.time >= nextFireTime)
+        {
+            ShootProjectile();
+            nextFireTime = Time.time + fireRate; // Define o tempo para o próximo disparo
+        }
+    }
+
+    private void OnAttackStarted(InputAction.CallbackContext context)
+    {
+        // Inicia o disparo contínuo
+        isShooting = true;
+    }
+
+    private void OnAttackCanceled(InputAction.CallbackContext context)
+    {
+        // Para o disparo contínuo
+        isShooting = false;
     }
 
     private void ShootProjectile()
