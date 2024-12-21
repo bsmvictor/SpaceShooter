@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3784188911993947199}
   - component: {fileID: 8420121845921453778}
   m_Layer: 0
-  m_Name: meteorGrey_big1_0
+  m_Name: Meteors
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -87,7 +87,7 @@ SpriteRenderer:
   m_Size: {x: 1.01, y: 0.84}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!58 &2389276047699861042
@@ -166,27 +166,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   asteroidList:
-  - sprite: {fileID: 6171837545649669406, guid: 6a3ed2b7e96f3481fa7a706294a321f8, type: 3}
+  - sprite: {fileID: 21300000, guid: 6a3ed2b7e96f3481fa7a706294a321f8, type: 3}
     health: 5
-  - sprite: {fileID: -6382108678130425886, guid: e6a3d56cf0cc1461281fc6c8131a1986, type: 3}
+  - sprite: {fileID: 21300000, guid: e6a3d56cf0cc1461281fc6c8131a1986, type: 3}
     health: 5
-  - sprite: {fileID: -4501234463003357724, guid: c06af9e7b21ec4ffc9001f6378b1c785, type: 3}
+  - sprite: {fileID: 21300000, guid: c06af9e7b21ec4ffc9001f6378b1c785, type: 3}
+    health: 4
+  - sprite: {fileID: 21300000, guid: b69f971c661db423d90ecc35edc428cc, type: 3}
+    health: 4
+  - sprite: {fileID: 21300000, guid: 0dec750fea9374b138b0832f1400bd99, type: 3}
     health: 5
-  - sprite: {fileID: -2618887360935937271, guid: b69f971c661db423d90ecc35edc428cc, type: 3}
+  - sprite: {fileID: 21300000, guid: c0e708c586a884a4599fa950dcb2f4c6, type: 3}
     health: 5
-  - sprite: {fileID: -1957121737005926835, guid: c1d4ccee1e7f849deb0e01768cdac9ed, type: 3}
-    health: 2
-  - sprite: {fileID: 1541252945735965799, guid: 3de891061c4f74cefad53cceb1cf1e55, type: 3}
+  - sprite: {fileID: 21300000, guid: 480f2796fee8544e999635e13c018e0c, type: 3}
+    health: 4
+  - sprite: {fileID: 21300000, guid: d9056636eebe94909b3c2f44a93574bb, type: 3}
+    health: 4
+  - sprite: {fileID: 21300000, guid: c1d4ccee1e7f849deb0e01768cdac9ed, type: 3}
     health: 3
-  - sprite: {fileID: 1541252945735965799, guid: 3de891061c4f74cefad53cceb1cf1e55, type: 3}
+  - sprite: {fileID: 21300000, guid: 4f650065642884b4f90fe003e0716bd1, type: 3}
     health: 3
-  - sprite: {fileID: 1577289885472759104, guid: 030c03a64f56c4279a58eed5aacca967, type: 3}
+  - sprite: {fileID: 21300000, guid: 45c871b28ad4742449c98bd442af0adc, type: 3}
     health: 2
-  - sprite: {fileID: -5882003297275017081, guid: ad022200f22104bf98f5996a9460d434, type: 3}
+  - sprite: {fileID: 21300000, guid: 3de891061c4f74cefad53cceb1cf1e55, type: 3}
     health: 2
-  - sprite: {fileID: 5747383013479556595, guid: be3d683cf102945b89acc40a30e62f45, type: 3}
-    health: 1
-  - sprite: {fileID: 9104036409002774470, guid: f15f51fc3b403478db15ae33f5fa36a6, type: 3}
-    health: 1
   spriteRenderer: {fileID: 3598664619934892211}
   currentHealth: 0

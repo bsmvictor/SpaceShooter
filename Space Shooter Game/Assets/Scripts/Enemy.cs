@@ -19,25 +19,28 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
-        // Verifica se há asteroides configurados e escolhe um aleatório
-        if (asteroidList != null && asteroidList.Count > 0)
-        {
-            AssignRandomAsteroid();
-        }
-        else
+        // Inicialização opcional
+        if (asteroidList == null || asteroidList.Count == 0)
         {
             Debug.LogError("Nenhum asteroide configurado na lista!");
         }
     }
 
-    private void AssignRandomAsteroid()
+    public void AssignRandomAsteroid()
     {
-        // Escolhe um asteroide aleatório da lista
-        AsteroidData randomAsteroid = asteroidList[Random.Range(0, asteroidList.Count)];
+        if (asteroidList != null && asteroidList.Count > 0)
+        {
+            // Escolhe um asteroide aleatório da lista
+            AsteroidData randomAsteroid = asteroidList[Random.Range(0, asteroidList.Count)];
 
-        // Define a sprite e a vida do asteroide
-        spriteRenderer.sprite = randomAsteroid.sprite;
-        currentHealth = randomAsteroid.health;
+            // Define a sprite e a vida do asteroide
+            spriteRenderer.sprite = randomAsteroid.sprite;
+            currentHealth = randomAsteroid.health;
+        }
+        else
+        {
+            Debug.LogError("Nenhum asteroide configurado na lista!");
+        }
     }
 
     public void TakeDamage(int damage)
