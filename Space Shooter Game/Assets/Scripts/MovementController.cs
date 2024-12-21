@@ -8,6 +8,7 @@ public class MovementController : MonoBehaviour
     public Rigidbody2D oRigidbody2D;
     private InputSystem_Actions inputActions;
     private Camera mainCamera; // Referência à câmera principal
+    public GameObject flame; // Chama da nave
 
     [Header("Stats")]
     public float accelerationSpeed = 3f; // Velocidade de aceleração
@@ -38,6 +39,9 @@ public class MovementController : MonoBehaviour
 
         // Calcula os limites do mundo visível com base na câmera
         UpdateScreenBounds();
+        
+        // Desativa a chama da nave no início
+        flame.SetActive(false);
     }
 
     private void Update()
@@ -45,6 +49,9 @@ public class MovementController : MonoBehaviour
         // Aceleração e direção baseados no Input System
         acceleration = Mathf.Max(0, inputActions.Player.Move.ReadValue<Vector2>().y); // Apenas aceleração positiva
         steering = inputActions.Player.Move.ReadValue<Vector2>().x; // Controle de rotação
+        
+        // Ativa a chama da nave ao acelerar
+        flame.SetActive(acceleration > 0);
     }
 
     private void FixedUpdate()

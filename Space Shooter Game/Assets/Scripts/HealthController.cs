@@ -9,19 +9,20 @@ public class PlayerHealth : MonoBehaviour
     [Header("Damage Settings")]
     public int damagePerHit = 20; // Dano causado por colisão com inimigo
 
-    [Header("Damage Sprites")]
-    public GameObject[] damageStages; // Array de GameObjects para os estágios de dano
+    [Header("Damage Sprites (Overlay System)")]
+    public SpriteRenderer damageOverlayRenderer; // Componente SpriteRenderer para o overlay de dano
+    public Sprite[] damageOverlays; // Array de sprites para representar os estágios de dano
+    private int currentDamageOverlayIndex = -1; // Índice do estágio de dano atual
 
     private void Start()
     {
         // Inicializa a vida atual com a vida máxima
         currentHealth = maxHealth;
 
-        // Desativa todas as sprites de dano no início
-        foreach (var stage in damageStages)
+        // Garante que o overlay inicial esteja vazio
+        if (damageOverlayRenderer != null)
         {
-            if (stage != null)
-                stage.SetActive(false);
+            damageOverlayRenderer.sprite = null;
         }
     }
 
@@ -33,7 +34,7 @@ public class PlayerHealth : MonoBehaviour
             TakeDamage(damagePerHit);
 
             // Opcional: Adicione feedback visual ou sonoro ao tomar dano
-            Debug.Log("Player hit by Enemy! Current Health: " + currentHealth);
+            Debug.Log($"Player hit by Enemy! Current Health: {currentHealth}");
         }
     }
 
@@ -43,7 +44,7 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= damage;
 
         // Atualiza o estágio visual de dano
-        UpdateDamageVisual();
+        UpdateDamageOverlay();
 
         // Verifica se a vida chegou a zero
         if (currentHealth <= 0)
@@ -53,16 +54,24 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    private void UpdateDamageVisual()
+    private void UpdateDamageOverlay()
     {
         // Calcula o índice do estágio de dano com base na vida restante
-        int damageStage = Mathf.FloorToInt((1 - (float)currentHealth / maxHealth) * damageStages.Length);
+        int damageStage = Mathf.FloorToInt((1 - (float)currentHealth / maxHealth) * damageOverlays.Length);
 
-        // Ativa a sprite correspondente e desativa as outras
-        for (int i = 0; i < damageStages.Length; i++)
+        // Garante que o índice esteja dentro do intervalo válido
+        damageStage = Mathf.Clamp(damageStage, 0, damageOverlays.Length - 1);
+
+        // Atualiza apenas se o índice do estágio de dano mudou
+        if (currentDamageOverlayIndex != damageStage)
         {
-            if (damageStages[i] != null)
-                damageStages[i].SetActive(i == damageStage);
+            currentDamageOverlayIndex = damageStage;
+
+            // Atualiza o sprite do overlay de dano
+            if (damageOverlayRenderer != null)
+            {
+                damageOverlayRenderer.sprite = damageOverlays[currentDamageOverlayIndex];
+            }
         }
     }
 
@@ -85,7 +94,7 @@ public class PlayerHealth : MonoBehaviour
         }
 
         // Atualiza o estágio visual após a cura
-        UpdateDamageVisual();
+        UpdateDamageOverlay();
     }
 
     public int GetCurrentHealth()
