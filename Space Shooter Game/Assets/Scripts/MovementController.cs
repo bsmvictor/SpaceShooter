@@ -11,7 +11,7 @@ public class MovementController : MonoBehaviour
 
     [Header("Stats")]
     public float accelerationSpeed = 3f; // Velocidade de aceleração
-    public float steeringSpeed = 3f; // Velocidade de rotação
+    public float steeringSpeed = 1f; // Velocidade de rotação
     public float maxVelocity = 10f; // Velocidade máxima para evitar extrapolação nos limites
 
     private float acceleration; // Valor de aceleração atual
