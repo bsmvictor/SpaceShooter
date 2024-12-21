@@ -3,7 +3,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [Header("Damage Settings")]
-    public int damage = 10; // Dano causado pelo projétil
+    public int damage = 1; // Dano causado pelo projétil
 
     private void OnBecameInvisible()
     {

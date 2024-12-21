@@ -12,6 +12,7 @@ public class MovementController : MonoBehaviour
     [Header("Stats")]
     public float accelerationSpeed = 3f; // Velocidade de aceleração
     public float steeringSpeed = 3f; // Velocidade de rotação
+    public float maxVelocity = 10f; // Velocidade máxima para evitar extrapolação nos limites
 
     private float acceleration; // Valor de aceleração atual
     private float steering; // Valor de rotação atual
@@ -56,13 +57,16 @@ public class MovementController : MonoBehaviour
 
         // Limita a posição do jogador aos limites da tela
         ClampPlayerPosition();
+
+        // Limita a velocidade máxima
+        LimitVelocity();
     }
 
     private void OnMove(InputAction.CallbackContext context)
     {
         // Atualiza os valores de aceleração e rotação
         Vector2 moveInput = context.ReadValue<Vector2>();
-        acceleration = Mathf.Max(0, moveInput.y); // Apenas aceleração positiva
+        acceleration = Mathf.Abs(moveInput.y); // Apenas aceleração positiva
         steering = moveInput.x;
     }
 
@@ -72,8 +76,20 @@ public class MovementController : MonoBehaviour
         Vector3 playerPosition = transform.position;
 
         // Limita a posição do jogador dentro dos limites
-        playerPosition.x = Mathf.Clamp(playerPosition.x, -screenBounds.x / 2, screenBounds.x / 2);
-        playerPosition.y = Mathf.Clamp(playerPosition.y, -screenBounds.y / 2, screenBounds.y / 2);
+        float margin = 0.5f; // Margem para evitar comportamento inesperado nas bordas
+        playerPosition.x = Mathf.Clamp(playerPosition.x, -screenBounds.x / 2 + margin, screenBounds.x / 2 - margin);
+        playerPosition.y = Mathf.Clamp(playerPosition.y, -screenBounds.y / 2 + margin, screenBounds.y / 2 - margin);
+
+        // Reseta a velocidade caso extrapole o limite
+        if (playerPosition.x == -screenBounds.x / 2 + margin || playerPosition.x == screenBounds.x / 2 - margin)
+        {
+            oRigidbody2D.linearVelocity = new Vector2(0, oRigidbody2D.linearVelocity.y);
+        }
+
+        if (playerPosition.y == -screenBounds.y / 2 + margin || playerPosition.y == screenBounds.y / 2 - margin)
+        {
+            oRigidbody2D.linearVelocity = new Vector2(oRigidbody2D.linearVelocity.x, 0);
+        }
 
         // Atualiza a posição do jogador
         transform.position = playerPosition;
@@ -86,11 +102,20 @@ public class MovementController : MonoBehaviour
         Vector3 topRight = mainCamera.ViewportToWorldPoint(new Vector3(1, 1, mainCamera.nearClipPlane));
 
         // Calcula os limites considerando a largura e altura visíveis
-        float margin = 2f; // Adiciona uma margem para evitar problemas nas bordas
+        float margin = 0.5f; // Adiciona uma margem para evitar problemas nas bordas
         screenBounds = new Vector2(
             (topRight.x - bottomLeft.x) - margin,
             (topRight.y - bottomLeft.y) - margin
         );
+    }
+
+    private void LimitVelocity()
+    {
+        // Limita a velocidade máxima do Rigidbody2D
+        if (oRigidbody2D.linearVelocity.magnitude > maxVelocity)
+        {
+            oRigidbody2D.linearVelocity = oRigidbody2D.linearVelocity.normalized * maxVelocity;
+        }
     }
 
     private void OnDestroy()
