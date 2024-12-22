@@ -10,7 +10,8 @@ public class ScoreManager : MonoBehaviour
 
     [Header("UI Elements")]
     public TextMeshProUGUI scoreText; // Exibe a pontuação
-
+    public GameObject scoreUI; // Painel de pontuação
+    
     private void Awake()
     {
         // Certifica-se de que este objeto seja único e não seja destruído ao carregar uma nova cena
@@ -45,5 +46,13 @@ public class ScoreManager : MonoBehaviour
     {
         score = 0;
         UpdateScoreText();
+    }
+    
+    public void SetScoreUIActive(bool isActive)
+    {
+        if (scoreUI != null)
+        {
+            scoreUI.SetActive(isActive);
+        }
     }
 }

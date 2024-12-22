@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     [Header("UI Elements")]
     public UnityEngine.UI.Text timeText; // Exibe o tempo vivo
     public GameObject gameOverUI; // Painel de Game Over
+    public GameObject restartButton; // Botão de reinício
 
     private void Awake()
     {
@@ -38,6 +39,12 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        // Garante que o botão de reinício esteja desativado no início
+        if (restartButton != null)
+        {
+            restartButton.SetActive(false);
+        }
+
         StartNewRun(); // Inicia uma nova run ao carregar o jogo
     }
 
@@ -55,6 +62,7 @@ public class GameManager : MonoBehaviour
     {
         // Reinicia as estatísticas
         ScoreManager.Instance.ResetScore();
+        ScoreManager.Instance.SetScoreUIActive(true); // Ativa a UI do score
         runStartTime = 0;
 
         // Remove UI de Game Over
@@ -63,8 +71,17 @@ public class GameManager : MonoBehaviour
             gameOverUI.SetActive(false);
         }
 
+        // Garante que o botão de reinício esteja desativado
+        if (restartButton != null)
+        {
+            restartButton.SetActive(false);
+        }
+
         // Reseta o estado da run
         isRunActive = true;
+
+        // Reinicia o SpawnerManager
+        SpawnerManager.Instance?.ResetSpawner();
 
         // Spawna o jogador
         SpawnPlayer();
@@ -73,6 +90,35 @@ public class GameManager : MonoBehaviour
         runStartTime = Time.time;
 
         Debug.Log("New run started!");
+    }
+
+
+    public void EndRun()
+    {
+        isRunActive = false;
+
+        // Para o spawn de meteoros
+        SpawnerManager.Instance?.StopSpawning();
+
+        // Destrói todos os meteoros presentes na cena
+        SpawnerManager.Instance?.DestroyAllMeteoroids();
+
+        // Desativa a UI do score
+        ScoreManager.Instance.SetScoreUIActive(false);
+
+        // Exibe o painel de Game Over
+        if (gameOverUI != null)
+        {
+            gameOverUI.SetActive(true);
+        }
+
+        // Ativa o botão de reinício
+        if (restartButton != null)
+        {
+            restartButton.SetActive(true);
+        }
+
+        Debug.Log($"Run ended! Final Score: {ScoreManager.Instance.score}");
     }
 
     private void SpawnPlayer()
@@ -97,19 +143,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void EndRun()
-    {
-        isRunActive = false;
-
-        // Exibe o painel de Game Over
-        if (gameOverUI != null)
-        {
-            gameOverUI.SetActive(true);
-        }
-
-        Debug.Log($"Run ended! Final Score: {ScoreManager.Instance.score}");
-    }
-
     private void UpdateUI(float runTime)
     {
         // Atualiza o tempo de jogo na interface
@@ -119,5 +152,11 @@ public class GameManager : MonoBehaviour
         }
 
         ScoreManager.Instance.UpdateScoreText();
+    }
+
+    public void RestartGame()
+    {
+        // Chama StartNewRun para reiniciar o jogo sem recarregar a cena
+        StartNewRun();
     }
 }

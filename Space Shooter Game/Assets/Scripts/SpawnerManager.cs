@@ -4,18 +4,29 @@ using UnityEngine;
 
 public class SpawnerManager : MonoBehaviour
 {
+    public static SpawnerManager Instance;
+
     public Camera mainCamera; // Câmera principal
     public GameObject player; // Referência ao jogador
     public GameObject[] meteoroidPrefabs; // Prefabs dos meteoros
 
     public float spawnRateMinimum = 0.5f; // Taxa mínima de spawn
     public float spawnRateMaximum = 1.5f; // Taxa máxima de spawn
-    public float meteoroidRotationMinimum = 0.5f; // Rotação mínima do meteoro
-    public float meteoroidRotationMaximum = 1.5f; // Rotação máxima do meteoro
-    public float meteoroidSpeedMinimum = 1f; // Velocidade mínima do meteoro
-    public float meteoroidSpeedMaximum = 3f; // Velocidade máxima do meteoro
 
     private float nextSpawnTime; // Tempo do próximo spawn
+    private bool isSpawning = true; // Controla se o spawner está ativo
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
@@ -24,7 +35,7 @@ public class SpawnerManager : MonoBehaviour
 
     private void Update()
     {
-        if (Time.time >= nextSpawnTime)
+        if (isSpawning && Time.time >= nextSpawnTime)
         {
             SpawnMeteoroid();
             DetermineNextSpawnTime();
@@ -38,12 +49,39 @@ public class SpawnerManager : MonoBehaviour
 
     private void SpawnMeteoroid()
     {
+        if (meteoroidPrefabs.Length == 0 || player == null)
+        {
+            Debug.LogWarning("Meteoros ou player não configurados no SpawnerManager!");
+            return;
+        }
+
         int prefabIndexToSpawn = Random.Range(0, meteoroidPrefabs.Length);
         GameObject prefabToSpawn = meteoroidPrefabs[prefabIndexToSpawn];
 
         GameObject meteoroid = Instantiate(prefabToSpawn, transform);
 
-        // Determina a posição inicial
+        // Configura posição inicial e movimento do meteoro
+        SetMeteoroidPositionAndMovement(meteoroid);
+    }
+
+    private void SetMeteoroidPositionAndMovement(GameObject meteoroid)
+    {
+        // Configuração da posição inicial
+        Vector3 position = GetRandomSpawnPosition();
+        meteoroid.transform.position = position;
+
+        // Configuração do movimento
+        Rigidbody2D rb = meteoroid.GetComponent<Rigidbody2D>();
+        if (rb != null && player != null)
+        {
+            Vector3 direction = player.transform.position - meteoroid.transform.position;
+            float speed = Random.Range(1f, 3f);
+            rb.AddForce(direction.normalized * speed, ForceMode2D.Impulse);
+        }
+    }
+
+    private Vector3 GetRandomSpawnPosition()
+    {
         bool placeVertical = Random.Range(0, 2) == 0;
         float xPosition = 0, yPosition = 0;
 
@@ -62,30 +100,31 @@ public class SpawnerManager : MonoBehaviour
             xPosition = sign * (mainCamera.orthographicSize * mainCamera.aspect + 1);
         }
 
-        Vector3 position = new Vector3(xPosition, yPosition, 0);
-        meteoroid.transform.position = position;
+        return new Vector3(xPosition, yPosition, 0);
+    }
 
-        // Configura os parâmetros no script Enemy
-        Enemy enemyScript = meteoroid.GetComponent<Enemy>();
-        if (enemyScript != null)
+    public void StopSpawning()
+    {
+        isSpawning = false;
+    }
+
+    public void DestroyAllMeteoroids()
+    {
+        foreach (Transform child in transform)
         {
-            enemyScript.AssignRandomAsteroid(); // Configura o asteroide aleatório
-
-            // Aplica força e rotação ao meteoro
-            Rigidbody2D rb = meteoroid.GetComponent<Rigidbody2D>();
-            if (rb != null)
-            {
-                Vector3 direction = player.transform.position - meteoroid.transform.position;
-                float speed = Random.Range(meteoroidSpeedMinimum, meteoroidSpeedMaximum);
-                rb.AddForce(direction.normalized * speed, ForceMode2D.Impulse);
-
-                float rotation = Random.Range(meteoroidRotationMinimum, meteoroidRotationMaximum);
-                rb.AddTorque(rotation);
-            }
+            Destroy(child.gameObject);
         }
-        else
-        {
-            Debug.LogError("O prefab não possui o script Enemy configurado!");
-        }
+    }
+
+    public void ResetSpawner()
+    {
+        // Reseta o estado do spawner para permitir novos spawns
+        isSpawning = true;
+
+        // Limpa quaisquer meteoros remanescentes
+        DestroyAllMeteoroids();
+
+        // Determina o próximo tempo de spawn
+        DetermineNextSpawnTime();
     }
 }
