@@ -920,8 +920,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 030e6d6e394b24d89be70546573b2907, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  damagePerHit: 20
+  maxHealth: 4
+  damagePerHit: 1
   damageOverlayRenderer: {fileID: 8912949828881958395}
   damageOverlays:
   - {fileID: 21300000, guid: 483cd111775bb4ec497d8aa7c9fdec11, type: 3}

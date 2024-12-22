@@ -87,13 +87,6 @@ public class Enemy : MonoBehaviour
         {
             // Destrói o asteroide
             Destroy(gameObject);
-
-            // Opcional: Adicione dano ao jogador aqui
-            HealthController playerHealth = collision.gameObject.GetComponent<HealthController>();
-            if (playerHealth != null)
-            {
-                playerHealth.TakeDamage(20); // Dano fixo ou configurável
-            }
         }
     }
 

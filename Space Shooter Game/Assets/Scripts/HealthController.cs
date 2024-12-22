@@ -3,11 +3,11 @@ using UnityEngine;
 public class HealthController : MonoBehaviour
 {
     [Header("Player Health Settings")]
-    public int maxHealth = 100; // Vida máxima do jogador
-    private int currentHealth;  // Vida atual do jogador
+    public int maxHealth = 4; // Vida máxima do jogador
+    [SerializeField] private int currentHealth;  // Vida atual do jogador
 
     [Header("Damage Settings")]
-    public int damagePerHit = 20; // Dano causado por colisão com inimigo
+    public int damagePerHit = 1; // Dano causado por colisão com inimigo
 
     [Header("Damage Sprites (Overlay System)")]
     public SpriteRenderer damageOverlayRenderer; // Componente SpriteRenderer para o overlay de dano
@@ -77,9 +77,16 @@ public class HealthController : MonoBehaviour
 
     private void Die()
     {
-        GameManager.Instance.EndRun(); // Finaliza a run ao morrer
+        // Notifica o IntegrityManager para atualizar as vidas antes de destruir o jogador
+        if (IntegrityManager.Instance != null)
+        {
+            IntegrityManager.Instance.UpdateLifeSprites(0); // Define zero vidas restantes
+        }
+
+        GameManager.Instance.EndRun(); // Finaliza a run
         Destroy(gameObject); // Remove a nave do jogador
     }
+
 
     public void Heal(int amount)
     {

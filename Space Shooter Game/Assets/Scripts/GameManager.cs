@@ -10,8 +10,12 @@ public class GameManager : MonoBehaviour
     private Vector3 spawnPoint = new Vector3(0, 0, 0); // Ponto de spawn do jogador (no centro da tela)
 
     private GameObject currentPlayer; // Referência ao jogador atual
+    public GameObject CurrentPlayer => currentPlayer; // Propriedade pública para acessar o jogador atual
+
     private float runStartTime; // Tempo de início da run
     private bool isRunActive = false; // Verifica se a run está ativa
+
+    public event System.Action<GameObject> OnPlayerSpawned; // Evento disparado ao spawnar o jogador
 
     [Header("UI Elements")]
     public UnityEngine.UI.Text timeText; // Exibe o tempo vivo
@@ -19,15 +23,16 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        // Configura o Singleton
+        // Certifica-se de que este objeto seja único e não seja destruído ao carregar uma nova cena
         if (Instance == null)
         {
             Instance = this;
+            transform.SetParent(null); // Garante que seja um root GameObject
             DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(gameObject);
+            Destroy(gameObject); // Evita duplicação
         }
     }
 
@@ -49,7 +54,7 @@ public class GameManager : MonoBehaviour
     public void StartNewRun()
     {
         // Reinicia as estatísticas
-        ScoreManager.Instance.score = 0; // Reinicia a pontuação
+        ScoreManager.Instance.ResetScore();
         runStartTime = 0;
 
         // Remove UI de Game Over
@@ -82,6 +87,9 @@ public class GameManager : MonoBehaviour
         if (playerPrefab != null)
         {
             currentPlayer = Instantiate(playerPrefab, spawnPoint, Quaternion.identity);
+
+            // Dispara o evento de spawn
+            OnPlayerSpawned?.Invoke(currentPlayer);
         }
         else
         {
@@ -99,14 +107,7 @@ public class GameManager : MonoBehaviour
             gameOverUI.SetActive(true);
         }
 
-        // Salva o recorde, se aplicável
         Debug.Log($"Run ended! Final Score: {ScoreManager.Instance.score}");
-    }
-
-    public void AddScore(int points)
-    {
-        // Adiciona pontos no ScoreManager
-        ScoreManager.Instance.AddScore(points);
     }
 
     private void UpdateUI(float runTime)
@@ -117,13 +118,6 @@ public class GameManager : MonoBehaviour
             timeText.text = $"Time: {runTime:F2}s";
         }
 
-        // Atualiza o score no ScoreManager
         ScoreManager.Instance.UpdateScoreText();
-    }
-
-    public void RestartRun()
-    {
-        // Reinicia a cena atual para iniciar uma nova run
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
