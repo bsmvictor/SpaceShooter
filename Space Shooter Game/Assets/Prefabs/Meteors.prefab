@@ -184,28 +184,40 @@ MonoBehaviour:
   asteroidList:
   - sprite: {fileID: 21300000, guid: 6a3ed2b7e96f3481fa7a706294a321f8, type: 3}
     health: 4
+    points: 100
   - sprite: {fileID: 21300000, guid: e6a3d56cf0cc1461281fc6c8131a1986, type: 3}
     health: 4
+    points: 100
   - sprite: {fileID: 21300000, guid: c06af9e7b21ec4ffc9001f6378b1c785, type: 3}
     health: 3
+    points: 75
   - sprite: {fileID: 21300000, guid: b69f971c661db423d90ecc35edc428cc, type: 3}
     health: 3
+    points: 0
   - sprite: {fileID: 21300000, guid: 0dec750fea9374b138b0832f1400bd99, type: 3}
     health: 4
+    points: 0
   - sprite: {fileID: 21300000, guid: c0e708c586a884a4599fa950dcb2f4c6, type: 3}
     health: 4
+    points: 0
   - sprite: {fileID: 21300000, guid: 480f2796fee8544e999635e13c018e0c, type: 3}
     health: 3
+    points: 0
   - sprite: {fileID: 21300000, guid: d9056636eebe94909b3c2f44a93574bb, type: 3}
     health: 3
+    points: 0
   - sprite: {fileID: 21300000, guid: c1d4ccee1e7f849deb0e01768cdac9ed, type: 3}
     health: 2
+    points: 0
   - sprite: {fileID: 21300000, guid: 4f650065642884b4f90fe003e0716bd1, type: 3}
     health: 2
+    points: 0
   - sprite: {fileID: 21300000, guid: 45c871b28ad4742449c98bd442af0adc, type: 3}
     health: 1
+    points: 0
   - sprite: {fileID: 21300000, guid: 3de891061c4f74cefad53cceb1cf1e55, type: 3}
     health: 1
+    points: 0
   spriteRenderer: {fileID: 3598664619934892211}
   polygonCollider2D: {fileID: 6040993933378338782}
   currentHealth: 0

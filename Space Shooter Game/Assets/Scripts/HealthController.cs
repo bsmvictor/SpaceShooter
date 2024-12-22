@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerHealth : MonoBehaviour
+public class HealthController : MonoBehaviour
 {
     [Header("Player Health Settings")]
     public int maxHealth = 100; // Vida máxima do jogador
@@ -77,11 +77,8 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
-        // Lógica de morte do jogador
-        Debug.Log("Player has died!");
-
-        // Opcional: Implementar lógica de Game Over ou reiniciar o jogo
-        Destroy(gameObject); // Destroi o jogador
+        GameManager.Instance.EndRun(); // Finaliza a run ao morrer
+        Destroy(gameObject); // Remove a nave do jogador
     }
 
     public void Heal(int amount)

@@ -394,7 +394,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1308313155033141095
+--- !u!1001 &1141093776
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -442,13 +442,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4541827847045053587, guid: 794e9f9416ebc4ffe9451505ea1ca8cf, type: 3}
-      propertyPath: m_Camera
-      value: 
-      objectReference: {fileID: 519420031}
     - target: {fileID: 6486849386221397937, guid: 794e9f9416ebc4ffe9451505ea1ca8cf, type: 3}
       propertyPath: m_Name
-      value: Player
+      value: Red Ship
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -461,5 +457,5 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 619394802}
-  - {fileID: 1308313155033141095}
   - {fileID: 1082605309}
+  - {fileID: 1141093776}
