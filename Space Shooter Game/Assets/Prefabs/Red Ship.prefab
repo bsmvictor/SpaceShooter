@@ -674,8 +674,8 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_LinearDamping: 0.5
+  m_AngularDamping: 0.5
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -684,7 +684,7 @@ Rigidbody2D:
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
@@ -885,8 +885,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   oRigidbody2D: {fileID: 460320563193777639}
   flame: {fileID: 9127807838081886125}
-  accelerationSpeed: 3
-  steeringSpeed: 1.2
+  accelerationSpeed: 5
+  steeringSpeed: 1
   maxVelocity: 10
 --- !u!114 &2965369750007484864
 MonoBehaviour:
@@ -921,6 +921,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 4
+  currentHealth: 0
   damagePerHit: 1
   damageOverlayRenderer: {fileID: 8912949828881958395}
   damageOverlays:

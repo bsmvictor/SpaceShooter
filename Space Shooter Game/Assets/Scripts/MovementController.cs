@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class MovementController : MonoBehaviour
 {
-    // Referências
+    [Header("References")]
     public Rigidbody2D oRigidbody2D;
     private InputSystem_Actions inputActions;
     private Camera mainCamera; // Referência à câmera principal
@@ -133,3 +133,5 @@ public class MovementController : MonoBehaviour
         inputActions.Player.Disable();
     }
 }
+
+

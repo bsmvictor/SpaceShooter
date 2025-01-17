@@ -38,6 +38,13 @@ public class AttackController : MonoBehaviour
 
     private void Update()
     {
+        // Verifica se o jogo está pausado
+        if (GameManager.Instance != null && GameManager.Instance.IsPaused)
+        {
+            isShooting = false; // Garante que o disparo seja interrompido se o jogo estiver pausado
+            return;
+        }
+
         // Verifica se o botão está pressionado e dispara continuamente
         if (isShooting && Time.time >= nextFireTime)
         {
@@ -48,6 +55,9 @@ public class AttackController : MonoBehaviour
 
     private void OnAttackStarted(InputAction.CallbackContext context)
     {
+        // Verifica se o jogo está pausado
+        if (GameManager.Instance != null && GameManager.Instance.IsPaused) return;
+
         // Inicia o disparo contínuo
         isShooting = true;
     }

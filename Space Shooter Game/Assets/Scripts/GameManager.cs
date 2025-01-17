@@ -23,6 +23,9 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverUI; // Painel de Game Over
     public GameObject pauseMenuUI; // Painel de pause
     public UnityEngine.UI.Text timeText; // Exibe o tempo vivo
+    
+    public bool IsPaused => isPaused;
+
 
     private void Awake()
     {
