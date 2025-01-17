@@ -7,145 +7,155 @@ public class GameManager : MonoBehaviour
 
     [Header("Run Settings")]
     public GameObject playerPrefab; // Prefab da nave do jogador
-    private Vector3 spawnPoint = new Vector3(0, 0, 0); // Ponto de spawn do jogador (no centro da tela)
+    private Vector3 spawnPoint = new Vector3(0, 0, 0); // Ponto de spawn do jogador
 
     private GameObject currentPlayer; // Referência ao jogador atual
     public GameObject CurrentPlayer => currentPlayer; // Propriedade pública para acessar o jogador atual
 
     private float runStartTime; // Tempo de início da run
     private bool isRunActive = false; // Verifica se a run está ativa
+    private bool isPaused = false; // Verifica se o jogo está pausado
 
     public event System.Action<GameObject> OnPlayerSpawned; // Evento disparado ao spawnar o jogador
+    public event System.Action OnSceneChanged; // Evento disparado ao mudar de cena
 
     [Header("UI Elements")]
-    public UnityEngine.UI.Text timeText; // Exibe o tempo vivo
     public GameObject gameOverUI; // Painel de Game Over
-    public GameObject restartButton; // Botão de reinício
+    public GameObject pauseMenuUI; // Painel de pause
+    public UnityEngine.UI.Text timeText; // Exibe o tempo vivo
 
     private void Awake()
     {
-        // Certifica-se de que este objeto seja único e não seja destruído ao carregar uma nova cena
         if (Instance == null)
         {
             Instance = this;
-            transform.SetParent(null); // Garante que seja um root GameObject
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(gameObject); // Evita duplicação
+            Destroy(gameObject);
         }
     }
 
     private void Start()
     {
-        // Garante que o botão de reinício esteja desativado no início
-        if (restartButton != null)
-        {
-            restartButton.SetActive(false);
-        }
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        StartNewRun();
+    }
 
-        StartNewRun(); // Inicia uma nova run ao carregar o jogo
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // Dispare o evento OnSceneChanged
+        OnSceneChanged?.Invoke();
+
+        if (scene.name == "GameplayScene")
+        {
+            gameOverUI = GameObject.Find("GameOverUI");
+            pauseMenuUI = GameObject.Find("PauseMenuUI");
+
+            if (gameOverUI != null) gameOverUI.SetActive(false);
+            if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
+
+            SpawnPlayer();
+        }
     }
 
     private void Update()
     {
-        if (isRunActive)
+        if (isRunActive && !isPaused)
         {
-            // Atualiza o tempo vivo
             float runTime = Time.time - runStartTime;
             UpdateUI(runTime);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape) && isRunActive)
+        {
+            if (isPaused) ResumeGame();
+            else PauseGame();
         }
     }
 
     public void StartNewRun()
     {
-        // Reinicia as estatísticas
-        ScoreManager.Instance.ResetScore();
-        ScoreManager.Instance.SetScoreUIActive(true); // Ativa a UI do score
-        runStartTime = 0;
-
-        // Remove UI de Game Over
-        if (gameOverUI != null)
-        {
-            gameOverUI.SetActive(false);
-        }
-
-        // Garante que o botão de reinício esteja desativado
-        if (restartButton != null)
-        {
-            restartButton.SetActive(false);
-        }
-
-        // Reseta o estado da run
         isRunActive = true;
+        isPaused = false;
 
-        // Reinicia o SpawnerManager
+        ScoreManager.Instance.ResetScore();
+        ScoreManager.Instance.SetScoreUIActive(true);
+
         SpawnerManager.Instance?.ResetSpawner();
 
-        // Spawna o jogador
         SpawnPlayer();
 
-        // Define o tempo de início da run
         runStartTime = Time.time;
+
+        if (gameOverUI != null) gameOverUI.SetActive(false);
+        if (pauseMenuUI != null) pauseMenuUI.SetActive(false);
 
         Debug.Log("New run started!");
     }
-
 
     public void EndRun()
     {
         isRunActive = false;
 
-        // Para o spawn de meteoros
         SpawnerManager.Instance?.StopSpawning();
-
-        // Destrói todos os meteoros presentes na cena
         SpawnerManager.Instance?.DestroyAllMeteoroids();
 
-        // Desativa a UI do score
         ScoreManager.Instance.SetScoreUIActive(false);
 
-        // Exibe o painel de Game Over
         if (gameOverUI != null)
         {
             gameOverUI.SetActive(true);
         }
 
-        // Ativa o botão de reinício
-        if (restartButton != null)
-        {
-            restartButton.SetActive(true);
-        }
+        Debug.Log("Run ended!");
+    }
 
-        Debug.Log($"Run ended! Final Score: {ScoreManager.Instance.score}");
+    public void PauseGame()
+    {
+        isPaused = true;
+        Time.timeScale = 0f;
+        if (pauseMenuUI != null)
+        {
+            pauseMenuUI.SetActive(true);
+        }
+    }
+
+    public void ResumeGame()
+    {
+        isPaused = false;
+        Time.timeScale = 1f;
+        if (pauseMenuUI != null)
+        {
+            pauseMenuUI.SetActive(false);
+        }
     }
 
     private void SpawnPlayer()
     {
-        // Destroi qualquer jogador existente
         if (currentPlayer != null)
         {
             Destroy(currentPlayer);
         }
 
-        // Instancia o jogador no centro da tela
         if (playerPrefab != null)
         {
             currentPlayer = Instantiate(playerPrefab, spawnPoint, Quaternion.identity);
-
-            // Dispara o evento de spawn
             OnPlayerSpawned?.Invoke(currentPlayer);
         }
         else
         {
-            Debug.LogError("PlayerPrefab não configurado no GameManager!");
+            Debug.LogError("PlayerPrefab não configurado!");
         }
     }
 
     private void UpdateUI(float runTime)
     {
-        // Atualiza o tempo de jogo na interface
         if (timeText != null)
         {
             timeText.text = $"Time: {runTime:F2}s";
@@ -156,7 +166,12 @@ public class GameManager : MonoBehaviour
 
     public void RestartGame()
     {
-        // Chama StartNewRun para reiniciar o jogo sem recarregar a cena
-        StartNewRun();
+        SceneManager.LoadScene("GameplayScene");
+    }
+
+    public void ReturnToMainMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MainMenu");
     }
 }

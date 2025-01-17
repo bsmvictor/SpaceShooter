@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpawnerManager : MonoBehaviour
 {
-    public static SpawnerManager Instance;
+    public static SpawnerManager Instance; // Singleton para fácil acesso
 
     public Camera mainCamera; // Câmera principal
     public GameObject player; // Referência ao jogador
@@ -14,10 +14,11 @@ public class SpawnerManager : MonoBehaviour
     public float spawnRateMaximum = 1.5f; // Taxa máxima de spawn
 
     private float nextSpawnTime; // Tempo do próximo spawn
-    private bool isSpawning = true; // Controla se o spawner está ativo
+    private bool isSpawning = false; // Controla se o spawner está ativo
 
     private void Awake()
     {
+        // Configura o Singleton
         if (Instance == null)
         {
             Instance = this;
@@ -30,11 +31,16 @@ public class SpawnerManager : MonoBehaviour
 
     private void Start()
     {
-        DetermineNextSpawnTime();
+        // Inicializa o próximo tempo de spawn se o spawner estiver ativo
+        if (isSpawning)
+        {
+            DetermineNextSpawnTime();
+        }
     }
 
     private void Update()
     {
+        // Checa se o spawner está ativo e se é hora de spawnar um meteoro
         if (isSpawning && Time.time >= nextSpawnTime)
         {
             SpawnMeteoroid();
@@ -108,6 +114,12 @@ public class SpawnerManager : MonoBehaviour
         isSpawning = false;
     }
 
+    public void StartSpawning()
+    {
+        isSpawning = true;
+        DetermineNextSpawnTime();
+    }
+
     public void DestroyAllMeteoroids()
     {
         foreach (Transform child in transform)
@@ -119,12 +131,7 @@ public class SpawnerManager : MonoBehaviour
     public void ResetSpawner()
     {
         // Reseta o estado do spawner para permitir novos spawns
-        isSpawning = true;
-
-        // Limpa quaisquer meteoros remanescentes
-        DestroyAllMeteoroids();
-
-        // Determina o próximo tempo de spawn
-        DetermineNextSpawnTime();
+        DestroyAllMeteoroids(); // Remove meteoros existentes
+        StartSpawning(); // Ativa o spawning novamente
     }
 }
