@@ -24,8 +24,11 @@ public class GameManager : MonoBehaviour
     public GameObject pauseMenuUI; // Painel de pause
     public UnityEngine.UI.Text timeText; // Exibe o tempo vivo
     
-    public bool IsPaused => isPaused;
+    [Header("Background Settings")]
+    public SpriteRenderer backgroundRenderer; // Renderer para exibir o background
+    public Sprite[] backgrounds; // Array de backgrounds para selecionar aleatoriamente
 
+    public bool IsPaused => isPaused;
 
     private void Awake()
     {
@@ -52,7 +55,6 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // Dispare o evento OnSceneChanged
         OnSceneChanged?.Invoke();
 
         if (scene.name == "GameplayScene")
@@ -93,6 +95,7 @@ public class GameManager : MonoBehaviour
         SpawnerManager.Instance?.ResetSpawner();
 
         SpawnPlayer();
+        SetRandomBackground(); // Define um background aleatório
 
         runStartTime = Time.time;
 
@@ -176,5 +179,40 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu");
+    }
+    
+    private void AdjustBackgroundToCamera(SpriteRenderer backgroundRenderer)
+    {
+        if (backgroundRenderer == null) return;
+
+        // Obtém a câmera principal
+        Camera mainCamera = Camera.main;
+        if (mainCamera == null) return;
+
+        // Obtém o tamanho da câmera
+        float screenAspect = (float)Screen.width / (float)Screen.height;
+        float cameraHeight = mainCamera.orthographicSize * 2;
+        Vector2 cameraSize = new Vector2(cameraHeight * screenAspect, cameraHeight);
+
+        // Obtém o tamanho do sprite
+        Vector2 spriteSize = backgroundRenderer.sprite.bounds.size;
+
+        // Calcula a escala necessária para o sprite preencher a tela
+        Vector3 scale = backgroundRenderer.transform.localScale;
+        scale.x = cameraSize.x / spriteSize.x;
+        scale.y = cameraSize.y / spriteSize.y;
+        backgroundRenderer.transform.localScale = scale;
+    }
+
+    private void SetRandomBackground()
+    {
+        if (backgrounds.Length == 0 || backgroundRenderer == null) return;
+
+        // Seleciona um sprite aleatório
+        Sprite selectedBackground = backgrounds[UnityEngine.Random.Range(0, backgrounds.Length)];
+        backgroundRenderer.sprite = selectedBackground;
+
+        // Ajusta o tamanho do background para preencher a câmera
+        AdjustBackgroundToCamera(backgroundRenderer);
     }
 }
