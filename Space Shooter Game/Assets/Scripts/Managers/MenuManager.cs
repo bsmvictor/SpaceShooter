@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,35 +16,30 @@ public class MenuManager : MonoBehaviour
     private void Start()
     {
         AdjustBackgroundToCamera();
-        ShowMainMenu();
-    }
-
-    public void ShowMainMenu()
-    {
-        Time.timeScale = 0f;
         mainMenuUI.SetActive(true);
         optionsUI.SetActive(false);
         comoJogarUI.SetActive(false);
     }
 
+    private void Update() => AdjustBackgroundToCamera();
+
     public void StartGame()
     {
-        OnclickSound();
-        mainMenuUI.SetActive(false);
-        Time.timeScale = 1f;
+        SoundFXManager.instance.PlaySoundFXClip(buttonSound, transform, 1f);
         SceneManager.LoadScene("GameplayScene");
     }
     
     public void ShowComoJogar()
     {
-        OnclickSound();
+        SoundFXManager.instance.PlaySoundFXClip(buttonSound, transform, 1f);
         comoJogarUI.SetActive(true);
         mainMenuUI.SetActive(false);
+        optionsUI.SetActive(false);
     }
     
     public void CloseComoJogar()
     {
-        OnclickSound();
+        SoundFXManager.instance.PlaySoundFXClip(buttonSound, transform, 1f);
         comoJogarUI.SetActive(false);
         optionsUI.SetActive(false);
         mainMenuUI.SetActive(true);
@@ -51,27 +47,24 @@ public class MenuManager : MonoBehaviour
 
     public void ShowOptions()
     {
-        OnclickSound();
-        optionsUI.SetActive(true);
+        SoundFXManager.instance.PlaySoundFXClip(buttonSound, transform, 1f);
+        comoJogarUI.SetActive(false);
         mainMenuUI.SetActive(false);
+        optionsUI.SetActive(true);
     }
 
     public void CloseOptions()
     {
-        OnclickSound();
+        SoundFXManager.instance.PlaySoundFXClip(buttonSound, transform, 1f);
         optionsUI.SetActive(false);
+        comoJogarUI.SetActive(false);
         mainMenuUI.SetActive(true);
     }
 
     public void ExitGame()
     {
-        OnclickSound();
-        Application.Quit();
-    }
-    
-    public void OnclickSound()
-    {
         SoundFXManager.instance.PlaySoundFXClip(buttonSound, transform, 1f);
+        Application.Quit();
     }
 
     private void AdjustBackgroundToCamera()
