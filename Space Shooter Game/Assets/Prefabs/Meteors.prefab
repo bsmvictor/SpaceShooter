@@ -221,3 +221,4 @@ MonoBehaviour:
   spriteRenderer: {fileID: 3598664619934892211}
   polygonCollider2D: {fileID: 6040993933378338782}
   currentHealth: 0
+  explosionSound: {fileID: 8300000, guid: 2774c5db4b266a442a07dc445124c877, type: 3}

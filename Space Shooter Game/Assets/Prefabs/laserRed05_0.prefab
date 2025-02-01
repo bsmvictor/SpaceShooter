@@ -103,6 +103,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  collisionSprite: {fileID: 4963517647956160959, guid: f3b8d8671924147cb802ff8149fa587b, type: 3}
+  destructionDelay: 0.01
 --- !u!50 &-8225665216266129541
 Rigidbody2D:
   serializedVersion: 5
